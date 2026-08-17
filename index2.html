@@ -1,28 +1,144 @@
-<div class="classification">
-    おためし
-</div>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEST PAGE | Official Portal</title>
 
-<h1 class="title">TEST</h1>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-<div class="subtitle">
-    ここ、ちゃんと見えてます？
-</div>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background:
+                radial-gradient(circle at center, #202838 0%, #0b0f16 70%);
+            color: #e8edf5;
+            font-family:
+                "Yu Gothic",
+                "Hiragino Kaku Gothic ProN",
+                Meiryo,
+                sans-serif;
+        }
 
-<div class="line"></div>
+        .container {
+            width: min(900px, 90%);
+            padding: 70px 50px;
+            text-align: center;
+            border: 1px solid #596579;
+            background: rgba(10, 15, 24, 0.92);
+            box-shadow:
+                0 0 0 8px rgba(255,255,255,0.02),
+                0 25px 80px rgba(0,0,0,0.65);
+        }
 
-<div class="message">
-    おっ、うごいてますね～
-</div>
+        .classification {
+            display: inline-block;
+            padding: 7px 20px;
+            margin-bottom: 35px;
+            border: 1px solid #768397;
+            color: #aeb9c9;
+            font-size: 12px;
+            letter-spacing: 0.3em;
+        }
 
-<div class="description">
-    すごい！HTMLが表示されました！
-</div>
+        .title {
+            margin: 0;
+            font-size: clamp(42px, 8vw, 80px);
+            font-weight: 300;
+            letter-spacing: 0.18em;
+        }
 
-<div class="status">
-    SYSTEM STATUS：
-    <span>たぶんうごいてる</span>
-</div>
+        .subtitle {
+            margin-top: 18px;
+            color: #8793a5;
+            font-size: 13px;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+        }
 
-<footer>
-    ありがとうございました。
-</footer>
+        .line {
+            width: 100px;
+            height: 1px;
+            margin: 45px auto;
+            background: #8d9aae;
+        }
+
+        .message {
+            font-size: 24px;
+            letter-spacing: 0.15em;
+            font-weight: 500;
+        }
+
+        .description {
+            margin-top: 20px;
+            color: #929dad;
+            font-size: 14px;
+            letter-spacing: 0.08em;
+        }
+
+        .status {
+            margin-top: 50px;
+            padding: 15px;
+            border-top: 1px solid #303947;
+            border-bottom: 1px solid #303947;
+            color: #9da9ba;
+            font-size: 12px;
+            letter-spacing: 0.12em;
+        }
+
+        .status span {
+            color: #cbd5e1;
+        }
+
+        footer {
+            margin-top: 35px;
+            color: #505b6b;
+            font-size: 10px;
+            letter-spacing: 0.2em;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="container">
+
+        <div class="classification">
+            SYSTEM TEST / INTERNAL
+        </div>
+
+        <h1 class="title">TEST</h1>
+
+        <div class="subtitle">
+            Official Verification Portal
+        </div>
+
+        <div class="line"></div>
+
+        <div class="message">
+            本ページはテストページです。
+        </div>
+
+        <div class="description">
+            本システムの正常な動作を確認するために設置されています。
+        </div>
+
+        <div class="status">
+            SYSTEM STATUS：
+            <span>OPERATIONAL</span>
+        </div>
+
+        <footer>
+            TEST ENVIRONMENT · NO FURTHER ACTION REQUIRED
+        </footer>
+
+    </main>
+
+</body>
+</html>
