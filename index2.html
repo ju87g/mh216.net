@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TEST PAGE | Official Portal</title>
+    <title>第二試験ページ</title>
 
     <style>
         * {
@@ -17,8 +17,8 @@
             justify-content: center;
             align-items: center;
             background:
-                radial-gradient(circle at center, #202838 0%, #0b0f16 70%);
-            color: #e8edf5;
+                radial-gradient(circle at center, #173b2a 0%, #06110b 75%);
+            color: #e5f5eb;
             font-family:
                 "Yu Gothic",
                 "Hiragino Kaku Gothic ProN",
@@ -30,77 +30,113 @@
             width: min(900px, 90%);
             padding: 70px 50px;
             text-align: center;
-            border: 1px solid #596579;
-            background: rgba(10, 15, 24, 0.92);
+            border: 1px solid #4f8064;
+            background: rgba(5, 18, 11, 0.94);
             box-shadow:
-                0 0 0 8px rgba(255,255,255,0.02),
-                0 25px 80px rgba(0,0,0,0.65);
+                0 0 0 8px rgba(120, 220, 150, 0.02),
+                0 25px 80px rgba(0, 0, 0, 0.7);
         }
 
         .classification {
             display: inline-block;
-            padding: 7px 20px;
+            padding: 7px 24px;
             margin-bottom: 35px;
-            border: 1px solid #768397;
-            color: #aeb9c9;
+            border: 1px solid #5b9170;
+            color: #a8cdb4;
             font-size: 12px;
-            letter-spacing: 0.3em;
+            letter-spacing: 0.25em;
         }
 
         .title {
             margin: 0;
-            font-size: clamp(42px, 8vw, 80px);
+            font-size: clamp(40px, 8vw, 78px);
             font-weight: 300;
             letter-spacing: 0.18em;
         }
 
         .subtitle {
             margin-top: 18px;
-            color: #8793a5;
+            color: #7fa88d;
             font-size: 13px;
-            letter-spacing: 0.35em;
-            text-transform: uppercase;
+            letter-spacing: 0.15em;
         }
 
         .line {
             width: 100px;
             height: 1px;
             margin: 45px auto;
-            background: #8d9aae;
+            background: #6da17d;
         }
 
         .message {
-            font-size: 24px;
-            letter-spacing: 0.15em;
+            font-size: 25px;
+            letter-spacing: 0.12em;
             font-weight: 500;
         }
 
         .description {
-            margin-top: 20px;
-            color: #929dad;
-            font-size: 14px;
+            margin-top: 22px;
+            color: #8eaf99;
+            font-size: 15px;
             letter-spacing: 0.08em;
         }
 
         .status {
             margin-top: 50px;
-            padding: 15px;
-            border-top: 1px solid #303947;
-            border-bottom: 1px solid #303947;
-            color: #9da9ba;
-            font-size: 12px;
+            padding: 18px;
+            border-top: 1px solid #294d36;
+            border-bottom: 1px solid #294d36;
+            color: #86a591;
+            font-size: 13px;
             letter-spacing: 0.12em;
         }
 
         .status span {
-            color: #cbd5e1;
+            color: #c5e6ce;
         }
 
         footer {
             margin-top: 35px;
-            color: #505b6b;
-            font-size: 10px;
-            letter-spacing: 0.2em;
+            color: #52705b;
+            font-size: 11px;
+            letter-spacing: 0.15em;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 28px;
+            border: 1px solid #5b9170;
+            background: transparent;
+            color: #c5e6ce;
+            text-decoration: none;
+            font-family: inherit;
+            font-size: 13px;
+            letter-spacing: 0.12em;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .button:hover {
+            background: #c5e6ce;
+            color: #06110b;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 28px;
+            border: 1px solid #5b9170;
+            color: #c5e6ce;
+            text-decoration: none;
+            font-size: 13px;
+            letter-spacing: 0.12em;
+            transition: 0.2s;
+        }
+
+        .button:hover {
+            background: #c5e6ce;
+            color: #06110b;
         }
     </style>
 </head>
@@ -110,35 +146,66 @@
     <main class="container">
 
         <div class="classification">
-            SYSTEM TEST / INTERNAL
+            第二段階・試験用ページ
         </div>
 
-        <h1 class="title">TEST</h1>
+        <h1 class="title">成功</h1>
 
         <div class="subtitle">
-            Official Verification Portal
+            次のページまで正常に到達しました
         </div>
 
         <div class="line"></div>
 
         <div class="message">
-            本ページはテストページです。
+            すごい！
         </div>
 
         <div class="description">
-            本システムの正常な動作を確認するために設置されています。
+            すごい！
         </div>
 
         <div class="status">
-            SYSTEM STATUS：
-            <span>OPERATIONAL</span>
+            現在の状態：
+            <span>ALL GREEN</span>
         </div>
 
         <footer>
-            TEST ENVIRONMENT · NO FURTHER ACTION REQUIRED
+            かきくけこ
+            <br><br>
+
+            <button id="colorButton" class="button">
+                ページの色を変える
+            </button>
+
+            <br>
+
+            <a href="index.html" class="button">
+                前のページへ戻る
+            </a>
         </footer>
 
     </main>
 
+    <script>
+        const backgrounds = [
+            "radial-gradient(circle at center, #3b2020 0%, #110606 75%)",
+            "radial-gradient(circle at center, #173b2a 0%, #06110b 75%)",
+            "radial-gradient(circle at center, #2b1b38 0%, #0d0712 75%)",
+            "radial-gradient(circle at center, #202838 0%, #080b10 75%)"
+        ];
+
+        let backgroundIndex = 1;
+
+        document.getElementById("colorButton").addEventListener("click", function () {
+            backgroundIndex++;
+
+            if (backgroundIndex >= backgrounds.length) {
+                backgroundIndex = 0;
+            }
+
+            document.body.style.background = backgrounds[backgroundIndex];
+        });
+    </script>
 </body>
 </html>
