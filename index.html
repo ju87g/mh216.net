@@ -1,28 +1,165 @@
-<div class="classification">
-    おためし
-</div>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>試験用ページ</title>
 
-<h1 class="title">TEST</h1>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-<div class="subtitle">
-    ここ、ちゃんと見えてます？
-</div>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background:
+                radial-gradient(circle at center, #202838 0%, #080b10 75%);
+            color: #e8edf5;
+            font-family:
+                "Yu Gothic",
+                "Hiragino Kaku Gothic ProN",
+                Meiryo,
+                sans-serif;
+        }
 
-<div class="line"></div>
+        .container {
+            width: min(900px, 90%);
+            padding: 70px 50px;
+            text-align: center;
+            border: 1px solid #596579;
+            background: rgba(10, 15, 24, 0.94);
+            box-shadow:
+                0 0 0 8px rgba(255,255,255,0.02),
+                0 25px 80px rgba(0,0,0,0.65);
+        }
 
-<div class="message">
-    おっ、うごいてますね～
-</div>
+        .classification {
+            display: inline-block;
+            padding: 7px 24px;
+            margin-bottom: 35px;
+            border: 1px solid #768397;
+            color: #aeb9c9;
+            font-size: 12px;
+            letter-spacing: 0.25em;
+        }
 
-<div class="description">
-    すごい！HTMLが表示されました！
-</div>
+        .title {
+            margin: 0;
+            font-size: clamp(42px, 8vw, 80px);
+            font-weight: 300;
+            letter-spacing: 0.2em;
+        }
 
-<div class="status">
-    SYSTEM STATUS：
-    <span>たぶんうごいてる</span>
-</div>
+        .subtitle {
+            margin-top: 18px;
+            color: #8793a5;
+            font-size: 13px;
+            letter-spacing: 0.18em;
+        }
 
-<footer>
-    ありがとうございました。
-</footer>
+        .line {
+            width: 100px;
+            height: 1px;
+            margin: 45px auto;
+            background: #8d9aae;
+        }
+
+        .message {
+            font-size: 26px;
+            letter-spacing: 0.12em;
+            font-weight: 500;
+        }
+
+        .description {
+            margin-top: 22px;
+            color: #929dad;
+            font-size: 15px;
+            letter-spacing: 0.08em;
+        }
+
+        .status {
+            margin-top: 50px;
+            padding: 18px;
+            border-top: 1px solid #303947;
+            border-bottom: 1px solid #303947;
+            color: #9da9ba;
+            font-size: 13px;
+            letter-spacing: 0.12em;
+        }
+
+        .status span {
+            color: #cbd5e1;
+        }
+
+        .next-button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 12px 28px;
+            border: 1px solid #768397;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 13px;
+            letter-spacing: 0.15em;
+            transition: 0.2s;
+        }
+
+        .next-button:hover {
+            background: #cbd5e1;
+            color: #080b10;
+        }
+
+        footer {
+            margin-top: 35px;
+            color: #505b6b;
+            font-size: 11px;
+            letter-spacing: 0.15em;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <main class="container">
+
+        <div class="classification">
+            たいへん重要な試験用ページ
+        </div>
+
+        <h1 class="title">TEST</h1>
+
+        <div class="subtitle">
+            ページが正常に表示されているか確認しています
+        </div>
+
+        <div class="line"></div>
+
+        <div class="message">
+            すごい！HTMLが表示されました！
+        </div>
+
+        <div class="description">
+            すごい！HTMLが表示されました！
+        </div>
+
+        <div class="status">
+            ページの状態：
+            <span>よさそう</span>
+        </div>
+
+        <footer>
+            あいうえお
+            <br><br>
+            <a href="index2.html" class="next-button">
+                次のページへ
+            </a>
+        </footer>
+
+    </main>
+
+</body>
+</html>
