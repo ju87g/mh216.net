@@ -1,270 +1,406 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Docker + FileBrowser 備忘録</title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docker + FileBrowser 備忘録</title>
+  <style>
+    * {
+        box-sizing: border-box;
+    }
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background:
-                radial-gradient(circle at center, #202838 0%, #080b10 75%);
-            color: #e8edf5;
-            font-family:
-                "Yu Gothic",
-                "Hiragino Kaku Gothic ProN",
-                Meiryo,
-                sans-serif;
-            line-height: 1.7;
-            padding: 40px 20px;
-        }
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+            radial-gradient(circle at center, #202838 0%, #080b10 75%);
+        color: #e8edf5;
+        font-family:
+            "Yu Gothic",
+            "Hiragino Kaku Gothic ProN",
+            Meiryo,
+            sans-serif;
+        line-height: 1.7;
+        padding: 40px 20px;
+    }
 
-        .container {
-            width: min(900px, 100%);
-            margin: 0 auto;
-            padding: 60px 50px;
-            border: 1px solid #596579;
-            background: rgba(10, 15, 24, 0.94);
-            box-shadow:
-                0 0 0 8px rgba(255,255,255,0.02),
-                0 25px 80px rgba(0,0,0,0.65);
-        }
+    .container {
+        width: min(900px, 100%);
+        margin: 0 auto;
+        padding: 60px 50px;
+        border: 1px solid #596579;
+        background: rgba(10, 15, 24, 0.94);
+        box-shadow:
+            0 0 0 8px rgba(255,255,255,0.02),
+            0 25px 80px rgba(0,0,0,0.65);
+    }
 
-        .classification {
-            display: inline-block;
-            padding: 7px 24px;
-            margin-bottom: 25px;
-            border: 1px solid #768397;
-            color: #aeb9c9;
-            font-size: 12px;
-            letter-spacing: 0.25em;
-        }
+    .classification {
+        display: inline-block;
+        padding: 7px 24px;
+        margin-bottom: 25px;
+        border: 1px solid #768397;
+        color: #aeb9c9;
+        font-size: 12px;
+        letter-spacing: 0.25em;
+    }
 
-        h1 {
-            margin: 0 0 10px;
-            font-size: clamp(24px, 5vw, 40px);
-            font-weight: 300;
-            letter-spacing: 0.15em;
-        }
+    h1 {
+        margin: 0 0 10px;
+        font-size: clamp(24px, 5vw, 40px);
+        font-weight: 300;
+        letter-spacing: 0.15em;
+    }
 
-        .subtitle {
-            color: #8793a5;
-            font-size: 13px;
-            letter-spacing: 0.15em;
-            margin-bottom: 40px;
-        }
+    .subtitle {
+        color: #8793a5;
+        font-size: 13px;
+        letter-spacing: 0.15em;
+        margin-bottom: 40px;
+    }
 
-        .line {
-            width: 100px;
-            height: 1px;
-            margin: 40px auto;
-            background: #8d9aae;
-        }
+    .line {
+        width: 100px;
+        height: 1px;
+        margin: 40px auto;
+        background: #8d9aae;
+    }
 
-        section {
-            margin-bottom: 45px;
-            text-align: left;
-        }
+    section {
+        background: rgba(255, 255, 255, 0.01);
+        border: 1px solid #303947;
+        border-radius: 8px;
+        padding: 26px;
+        margin-bottom: 22px;
+        text-align: left;
+    }
 
-        h2 {
-            margin-top: 0;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #303947;
-            font-size: 1.2rem;
-            letter-spacing: 0.1em;
-            color: #cbd5e1;
-        }
+    h2 {
+        margin-top: 0;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #303947;
+        font-size: 1.25rem;
+        letter-spacing: 0.1em;
+        color: #cbd5e1;
+    }
 
-        h3 {
-            margin-top: 25px;
-            font-size: 1rem;
-            color: #aeb9c9;
-            letter-spacing: 0.08em;
-        }
+    h3 {
+        margin-top: 26px;
+        font-size: 1rem;
+        color: #aeb9c9;
+        letter-spacing: 0.08em;
+    }
 
-        p {
-            color: #b0bac8;
-            font-size: 14px;
-            letter-spacing: 0.05em;
-        }
+    p {
+        color: #b0bac8;
+        font-size: 14px;
+        letter-spacing: 0.05em;
+    }
 
-        pre {
-            background: #040609;
-            color: #cbd5e1;
-            padding: 16px 20px;
-            border: 1px solid #303947;
-            border-radius: 4px;
-            overflow-x: auto;
-            font-size: 13px;
-            font-family: Consolas, "Cascadia Code", "Courier New", monospace;
-            line-height: 1.5;
-        }
+    pre {
+        background: #040609;
+        color: #cbd5e1;
+        padding: 16px 20px;
+        border: 1px solid #303947;
+        border-radius: 6px;
+        overflow-x: auto;
+        font-size: 13px;
+        font-family: Consolas, "Cascadia Code", "Courier New", monospace;
+        line-height: 1.55;
+    }
 
-        code {
-            font-family: Consolas, "Cascadia Code", "Courier New", monospace;
-        }
+    code {
+        font-family: Consolas, "Cascadia Code", "Courier New", monospace;
+    }
 
-        p code, li code {
-            background: rgba(255, 255, 255, 0.08);
-            padding: 2px 6px;
-            border-radius: 3px;
-            color: #e2e8f0;
-            font-size: 12px;
-        }
+    p code, li code {
+        background: rgba(255, 255, 255, 0.08);
+        padding: 2px 6px;
+        border-radius: 3px;
+        color: #e2e8f0;
+        font-size: 12px;
+    }
 
-        .note {
-            background: rgba(45, 112, 245, 0.08);
-            border-left: 3px solid #3b82f6;
-            padding: 14px 18px;
-            border-radius: 4px;
-            margin: 20px 0;
-            font-size: 13px;
-            color: #cbd5e1;
-        }
+    .note {
+        background: rgba(45, 112, 245, 0.08);
+        border-left: 4px solid #3b82f6;
+        padding: 14px 16px;
+        border-radius: 6px;
+        margin: 18px 0;
+        font-size: 13px;
+        color: #cbd5e1;
+    }
 
-        .warning {
-            background: rgba(245, 158, 11, 0.08);
-            border-left: 3px solid #f59e0b;
-            padding: 14px 18px;
-            border-radius: 4px;
-            margin: 20px 0;
-            font-size: 13px;
-            color: #cbd5e1;
-        }
+    .warning {
+        background: rgba(245, 158, 11, 0.08);
+        border-left: 4px solid #f59e0b;
+        padding: 14px 16px;
+        border-radius: 6px;
+        margin: 18px 0;
+        font-size: 13px;
+        color: #cbd5e1;
+    }
 
-        ul, ol {
-            color: #b0bac8;
-            font-size: 14px;
-            padding-left: 1.5rem;
-        }
+    ul, ol {
+        color: #b0bac8;
+        font-size: 14px;
+        padding-left: 1.5rem;
+    }
 
-        li {
-            margin-bottom: 8px;
-        }
+    li {
+        margin-bottom: 8px;
+    }
 
-        /* 戻るボタンのスタイル */
-        .footer-nav {
-            text-align: center;
-            margin-top: 60px;
-            padding-top: 30px;
-            border-top: 1px solid #303947;
-        }
+    /* 戻るボタンのスタイル */
+    .footer-nav {
+        text-align: center;
+        margin-top: 50px;
+        padding-top: 30px;
+        border-top: 1px solid #303947;
+    }
 
-        .back-button {
-            display: inline-block;
-            padding: 12px 32px;
-            border: 1px solid #768397;
-            color: #cbd5e1;
-            background: rgba(255, 255, 255, 0.02);
-            text-decoration: none;
-            font-size: 13px;
-            letter-spacing: 0.15em;
-            transition: 0.2s;
-        }
+    .back-button {
+        display: inline-block;
+        padding: 12px 32px;
+        border: 1px solid #768397;
+        color: #cbd5e1;
+        background: rgba(255, 255, 255, 0.02);
+        text-decoration: none;
+        font-size: 13px;
+        letter-spacing: 0.15em;
+        transition: 0.2s;
+    }
 
-        .back-button:hover {
-            background: #cbd5e1;
-            color: #080b10;
-        }
-    </style>
+    .back-button:hover {
+        background: #cbd5e1;
+        color: #080b10;
+    }
+
+    footer {
+        text-align: center;
+        color: #768397;
+        margin-top: 40px;
+        font-size: 12px;
+        letter-spacing: 0.15em;
+    }
+  </style>
 </head>
 
 <body>
 
 <main class="container">
 
-    <div class="classification">
-        MEMO DETAIL
+  <div class="classification">
+      MEMO DETAIL
+  </div>
+
+  <h1>Docker + FileBrowser 備忘録</h1>
+  <div class="subtitle">Debian系LinuxにDockerをインストールし、FileBrowserをDocker Composeで運用するためのメモ</div>
+
+  <div class="line"></div>
+
+  <section>
+    <h2>1. Dockerのインストール</h2>
+
+    <p>まず、Dockerのリポジトリを利用するために必要なパッケージをインストールする。</p>
+
+    <pre><code>sudo apt-get install ca-certificates curl gnupg lsb-release</code></pre>
+
+    <p>Docker公式リポジトリのGPGキーを登録する。</p>
+
+    <pre><code>curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg</code></pre>
+
+    <p>Docker公式リポジトリを追加する。</p>
+
+    <pre><code>echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null</code></pre>
+
+    <p>登録されたリポジトリを確認する。</p>
+
+    <pre><code>cat /etc/apt/sources.list.d/docker.list</code></pre>
+
+    <p>パッケージ情報を更新してDockerをインストールする。</p>
+
+    <pre><code>sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin</code></pre>
+
+    <p>最後に、Dockerが正常に動作するか確認する。</p>
+
+    <pre><code>docker run hello-world</code></pre>
+  </section>
+
+  <section>
+    <h2>2. Dockerコンテナの起動</h2>
+
+    <p>Docker Composeの設定ファイル（<code>compose.yml</code> または <code>docker-compose.yml</code>）があるディレクトリで、次のコマンドを実行する。</p>
+
+    <pre><code>docker compose up -d</code></pre>
+
+    <div class="note">
+      <strong>ポイント：</strong>
+      <code>docker compose up -d</code> は、必要に応じてコンテナを作成して起動するコマンド。
+      既存のコンテナがあれば、それを利用して起動する。
     </div>
 
-    <h1>Docker + FileBrowser 備忘録</h1>
-    <div class="subtitle">Debian系Linux環境での構築・運用メモ</div>
+    <p>
+      <code>docker compose down</code>はコンテナの停止とコンテナの削除を両方行っているみたい
+      なのでコンテナ内部だけに保存していたデータは失われる。
+    </p>
 
-    <div class="line"></div>
+    <p>
+      そのため、FileBrowserのデータベースや設定ファイルなど、
+      <strong>コンテナを作り直しても残したいデータはホスト側に保存する</strong>ようにする。
+    </p>
+  </section>
 
-    <section>
-        <h2>1. Dockerのインストール</h2>
-        <p>必要なパッケージと公式リポジトリの登録、およびDockerのインストール手順。</p>
-        <pre><code>sudo apt-get install ca-certificates curl gnupg lsb-release
+  <section>
+    <h2>3. ホストPCとコンテナのデータを紐づける</h2>
 
-curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    <p>
+      Dockerでは、ホストPCのディレクトリをコンテナ内に
+      <strong>ボリュームとしてマウント</strong>できる。
+    </p>
 
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null
+    <p>FileBrowserの場合、例えば次のような設定にする。</p>
 
-sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
-
-docker run hello-world</code></pre>
-    </section>
-
-    <section>
-        <h2>2. Dockerコンテナの起動とデータ永続化</h2>
-        <p>Composeファイルがあるディレクトリでバックグラウンド起動を行う。</p>
-        <pre><code>docker compose up -d</code></pre>
-
-        <div class="note">
-            <strong>ポイント：</strong>
-            <code>docker compose down</code> はコンテナの停止と削除を同時に行いますが、ホスト側にボリュームマウントしているデータは保持されます。
-        </div>
-    </section>
-
-    <section>
-        <h2>3. ボリュームマウントの設定例</h2>
-        <p>コンテナ外（ホストPC側）のディレクトリとコンテナ内を直結させる設定。</p>
-        <pre><code>services:
+    <pre><code>services:
   filebrowser:
     image: filebrowser/filebrowser
     container_name: filebrowser
     ports:
-      - "1145:80"
+      - "8080:80"
     volumes:
       - /home/ubuntu/data:/srv
       - /home/ubuntu/filebrowser/database:/database
       - /home/ubuntu/filebrowser/config:/config
     restart: unless-stopped</code></pre>
 
-        <h3>各ボリュームの役割</h3>
-        <ul>
-            <li><code>/home/ubuntu/data:/srv</code> : FileBrowserで操作するファイルの実体</li>
-            <li><code>/home/ubuntu/filebrowser/database:/database</code> : ユーザー情報や権限のデータベース</li>
-            <li><code>/home/ubuntu/filebrowser/config:/config</code> : 各種設定ファイル</li>
-        </ul>
-    </section>
+    <h3>各ボリュームの意味</h3>
 
-    <section>
-        <h2>4. 運用上の注意点</h2>
-        <div class="warning">
-            <strong>注意：</strong>
-            ホスト側の <code>database</code> や <code>config</code> フォルダを手動で削除するとデータや設定が失われます。適宜バックアップを取りましょう。
-        </div>
-    </section>
+    <ul>
+      <li>
+        <code>/home/ubuntu/data:/srv</code><br>
+        FileBrowserで実際に操作するファイルを保存する場所。
+        ホストPCの <code>/home/ubuntu/data</code> がコンテナ内の <code>/srv</code> として見える。
+      </li>
+      <li>
+        <code>/home/ubuntu/filebrowser/database:/database</code><br>
+        FileBrowserのデータベースをホストPC側に保存する。
+      </li>
+      <li>
+        <code>/home/ubuntu/filebrowser/config:/config</code><br>
+        FileBrowserの設定ファイルをホストPC側に保存する。
+      </li>
+    </ul>
 
-    <section>
-        <h2>5. よく使うコマンド一覧</h2>
-        <pre><code># 起動
-docker compose up -d
-
-# 停止・削除
-docker compose down
-
-# コンテナ状態確認
-docker ps -a
-
-# ログ確認
-docker compose logs -f</code></pre>
-    </section>
-
-    <!-- 戻るボタンエリア -->
-    <div class="footer-nav">
-        <a href="bibouroku.html" class="back-button">
-            ← 備忘録セットに戻る
-        </a>
+    <div class="note">
+      <strong>重要：</strong>
+      「コンテナ」と「データ」は分けて考える。
+      コンテナは作り直しても、ホスト側にマウントしたデータは残るようにしておく。
     </div>
+  </section>
+
+  <section>
+    <h2>4. 初回起動と2回目以降の動作</h2>
+
+    <p>
+      初回起動時にホスト側の <code>database</code> や <code>config</code> が存在しなければ、
+      FileBrowser側で必要なファイルが作成される。
+    </p>
+
+    <p>
+      2回目以降は、すでにホスト側に保存されているデータベースや設定ファイルが
+      コンテナから利用される。
+    </p>
+
+    <p>
+      つまり、コンテナを削除して作り直したとしても、
+      <strong>ホスト側に保存してあるデータベース・設定・ファイル本体は基本的にそのまま残る</strong>。
+    </p>
+
+    <div class="warning">
+      <strong>注意：</strong>
+      ホスト側の <code>database</code> や <code>config</code> を手動で削除すると、
+      FileBrowserのデータや設定が失われる可能性がある。
+      バックアップを取っておくと安全。
+    </div>
+  </section>
+
+  <section>
+    <h2>5. Dockerコンテナの停止</h2>
+
+    <p>Docker Composeで起動したコンテナを停止・削除する場合は次のコマンドを使う。</p>
+
+    <pre><code>docker compose down</code></pre>
+
+    <p>
+      <code>down</code> はComposeで作成したコンテナやネットワークなどを停止・削除する。
+      ただし、今回のようにホスト側のディレクトリをボリュームとしてマウントしていれば、
+      そのディレクトリに保存されているファイルは通常そのまま残る。
+    </p>
+  </section>
+
+  <section>
+    <h2>6. 全体のイメージ</h2>
+
+    <pre><code>ホストPC
+│
+├── /home/ubuntu/data
+│     └── FileBrowserで管理するファイル
+│
+├── /home/ubuntu/filebrowser
+│     ├── database
+│     │     └── FileBrowserのデータベース
+│     │
+│     └── config
+│           └── FileBrowserの設定
+│
+└─────────────────────────────
+            ↑
+            │ volume mount
+            ↓
+Dockerコンテナ
+│
+└── FileBrowser
+       ├── /srv      ← /home/ubuntu/data
+       ├── /database ← /home/ubuntu/filebrowser/database
+       └── /config   ← /home/ubuntu/filebrowser/config</code></pre>
+
+    <div class="note">
+      <strong>覚え方：</strong>
+      Dockerコンテナは「アプリを動かす箱」。
+      長期間残したいデータは、箱の外（ホスト側）に置いてコンテナからマウントする。
+    </div>
+  </section>
+
+  <section>
+    <h2>7. よく使うコマンド</h2>
+
+    <h3>起動</h3>
+    <pre><code>docker compose up -d</code></pre>
+
+    <h3>停止・削除</h3>
+    <pre><code>docker compose down</code></pre>
+
+    <h3>コンテナの状態確認</h3>
+    <pre><code>docker ps -a</code></pre>
+
+    <h3>ログ確認</h3>
+    <pre><code>docker compose logs</code></pre>
+
+    <h3>リアルタイムでログを見る</h3>
+    <pre><code>docker compose logs -f</code></pre>
+  </section>
+
+  <!-- 戻るボタンエリア -->
+  <div class="footer-nav">
+      <a href="bibouroku.html" class="back-button">
+          ← 備忘録セットに戻る
+      </a>
+  </div>
+
+  <footer>
+    Docker + FileBrowser 備忘録
+  </footer>
 
 </main>
 
