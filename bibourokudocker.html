@@ -97,16 +97,46 @@
         letter-spacing: 0.05em;
     }
 
+    /* コードブロックのラッパー設定 */
+    .code-wrapper {
+        position: relative;
+        margin: 1em 0;
+    }
+
     pre {
         background: #040609;
         color: #cbd5e1;
         padding: 16px 20px;
+        padding-top: 36px; /* コピーボタンと被らないように上部を空ける */
         border: 1px solid #303947;
         border-radius: 6px;
         overflow-x: auto;
         font-size: 13px;
         font-family: Consolas, "Cascadia Code", "Courier New", monospace;
         line-height: 1.55;
+        margin: 0;
+    }
+
+    /* コピーボタンのスタイル */
+    .copy-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid #475569;
+        color: #cbd5e1;
+        padding: 3px 10px;
+        font-size: 11px;
+        border-radius: 4px;
+        cursor: pointer;
+        letter-spacing: 0.05em;
+        transition: 0.2s;
+        font-family: sans-serif;
+    }
+
+    .copy-btn:hover {
+        background: rgba(255, 255, 255, 0.18);
+        color: #ffffff;
     }
 
     code {
@@ -403,6 +433,48 @@ Dockerコンテナ
   </footer>
 
 </main>
+
+<!-- 自動でコピーボタンを埋め込むJavaScript -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const pres = document.querySelectorAll('pre');
+    
+    pres.forEach((pre) => {
+      // pre要素を囲むラッパーを作成
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-wrapper';
+      pre.parentNode.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
+
+      // コピーボタンを作成
+      const button = document.createElement('button');
+      button.className = 'copy-btn';
+      button.textContent = 'Copy';
+
+      button.addEventListener('click', () => {
+        const code = pre.querySelector('code') || pre;
+        const text = code.innerText;
+
+        navigator.clipboard.writeText(text).then(() => {
+          button.textContent = 'Copied!';
+          button.style.background = 'rgba(59, 130, 246, 0.3)';
+          button.style.borderColor = '#3b82f6';
+
+          setTimeout(() => {
+            button.textContent = 'Copy';
+            button.style.background = 'rgba(255, 255, 255, 0.08)';
+            button.style.borderColor = '#475569';
+          }, 2000);
+        }).catch(err => {
+          console.error('Failed to copy: ', err);
+          button.textContent = 'Error';
+        });
+      });
+
+      wrapper.appendChild(button);
+    });
+  });
+</script>
 
 </body>
 </html>
