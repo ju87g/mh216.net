@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docker + Python (smbus2・I2C) 備忘録</title>
+  <style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+            radial-gradient(circle at center, #202838 0%, #080b10 75%);
+        color: #e8edf5;
+        font-family:
+            "Yu Gothic",
+            "Hiragino Kaku Gothic ProN",
+            Meiryo,
+            sans-serif;
+        line-height: 1.7;
+        padding: 40px 20px;
+    }
+
+    .container {
+        width: min(900px, 100%);
+        margin: 0 auto;
+        padding: 60px 50px;
+        border: 1px solid #596579;
+        background: rgba(10, 15, 24, 0.94);
+        box-shadow:
+            0 0 0 8px rgba(255,255,255,0.02),
+            0 25px 80px rgba(0,0,0,0.65);
+    }
+
+    .classification {
+        display: inline-block;
+        padding: 7px 24px;
+        margin-bottom: 25px;
+        border: 1px solid #768397;
+        color: #aeb9c9;
+        font-size: 12px;
+        letter-spacing: 0.25em;
+    }
+
+    h1 {
+        margin: 0 0 10px;
+        font-size: clamp(22px, 4vw, 36px);
+        font-weight: 300;
+        letter-spacing: 0.15em;
+    }
+
+    .subtitle {
+        color: #8793a5;
+        font-size: 13px;
+        letter-spacing: 0.15em;
+        margin-bottom: 40px;
+    }
+
+    .line {
+        width: 100px;
+        height: 1px;
+        margin: 40px auto;
+        background: #8d9aae;
+    }
+
+    section {
+        background: rgba(255, 255, 255, 0.01);
+        border: 1px solid #303947;
+        border-radius: 8px;
+        padding: 26px;
+        margin-bottom: 22px;
+        text-align: left;
+    }
+
+    h2 {
+        margin-top: 0;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #303947;
+        font-size: 1.25rem;
+        letter-spacing: 0.1em;
+        color: #cbd5e1;
+    }
+
+    h3 {
+        margin-top: 26px;
+        font-size: 1rem;
+        color: #aeb9c9;
+        letter-spacing: 0.08em;
+    }
+
+    p {
+        color: #b0bac8;
+        font-size: 14px;
+        letter-spacing: 0.05em;
+    }
+
+    /* コードブロックのラッパー設定 */
+    .code-wrapper {
+        position: relative;
+        margin: 1em 0;
+    }
+
+    pre {
+        background: #040609;
+        color: #cbd5e1;
+        padding: 16px 20px;
+        padding-top: 36px; /* コピーボタンと被らないように上部を空ける */
+        border: 1px solid #303947;
+        border-radius: 6px;
+        overflow-x: auto;
+        font-size: 13px;
+        font-family: Consolas, "Cascadia Code", "Courier New", monospace;
+        line-height: 1.55;
+        margin: 0;
+    }
+
+    /* コピーボタンのスタイル */
+    .copy-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid #475569;
+        color: #cbd5e1;
+        padding: 3px 10px;
+        font-size: 11px;
+        border-radius: 4px;
+        cursor: pointer;
+        letter-spacing: 0.05em;
+        transition: 0.2s;
+        font-family: sans-serif;
+    }
+
+    .copy-btn:hover {
+        background: rgba(255, 255, 255, 0.18);
+        color: #ffffff;
+    }
+
+    code {
+        font-family: Consolas, "Cascadia Code", "Courier New", monospace;
+    }
+
+    p code, li code {
+        background: rgba(255, 255, 255, 0.08);
+        padding: 2px 6px;
+        border-radius: 3px;
+        color: #e2e8f0;
+        font-size: 12px;
+    }
+
+    .note {
+        background: rgba(45, 112, 245, 0.08);
+        border-left: 4px solid #3b82f6;
+        padding: 14px 16px;
+        border-radius: 6px;
+        margin: 18px 0;
+        font-size: 13px;
+        color: #cbd5e1;
+    }
+
+    .warning {
+        background: rgba(245, 158, 11, 0.08);
+        border-left: 4px solid #f59e0b;
+        padding: 14px 16px;
+        border-radius: 6px;
+        margin: 18px 0;
+        font-size: 13px;
+        color: #cbd5e1;
+    }
+
+    ul, ol {
+        color: #b0bac8;
+        font-size: 14px;
+        padding-left: 1.5rem;
+    }
+
+    li {
+        margin-bottom: 8px;
+    }
+
+    .footer-nav {
+        text-align: center;
+        margin-top: 50px;
+        padding-top: 30px;
+        border-top: 1px solid #303947;
+    }
+
+    .back-button {
+        display: inline-block;
+        padding: 12px 32px;
+        border: 1px solid #768397;
+        color: #cbd5e1;
+        background: rgba(255, 255, 255, 0.02);
+        text-decoration: none;
+        font-size: 13px;
+        letter-spacing: 0.15em;
+        transition: 0.2s;
+    }
+
+    .back-button:hover {
+        background: #cbd5e1;
+        color: #080b10;
+    }
+
+    footer {
+        text-align: center;
+        color: #768397;
+        margin-top: 40px;
+        font-size: 12px;
+        letter-spacing: 0.15em;
+    }
+  </style>
+</head>
+
+<body>
+
+<main class="container">
+
+  <div class="classification">
+      PYTHON + DOCKER MEMO
+  </div>
+
+  <h1>Dockerで自作Pythonプログラム(smbus2)を動かす備忘録</h1>
+  <div class="subtitle">Ubuntu環境でDockerを使い、I2Cデバイス（センサー等）を制御するPythonスクリプトを実行する手順</div>
+
+  <div class="line"></div>
+
+  <section>
+    <h2>1. 必要なファイル構成</h2>
+    <p>作業用フォルダ（例: <code>~/pyimg</code>）の中に、以下の3つのファイルを用意する。</p>
+
+    <pre><code>pyimg/
+ ┣ Dockerfile
+ ┣ docker-compose.yml
+ ┗ tmpapp.py (自作のPythonプログラム)</code></pre>
+  </section>
+
+  <section>
+    <h2>2. Dockerfile の書き方</h2>
+    <p>コンテナ内に構築する環境（ベースのPythonと必要なライブラリ）の設計図。</p>
+
+    <pre><code>FROM python:3.11-slim
+
+WORKDIR /app
+
+# smbus2 ライブラリをインストールする
+RUN pip install --no-cache-dir smbus2
+
+# ホストのファイルをコンテナ内の /app にコピーする
+COPY . /app
+
+# コンテナ起動時に実行するコマンド
+CMD ["python", "tmpapp.py"]</code></pre>
+
+    <h3>各行の意味</h3>
+    <ul>
+      <li><code>FROM python:3.11-slim</code>: 軽量なDebianベースのPython 3.11公式イメージを使用。</li>
+      <li><code>WORKDIR /app</code>: コンテナ内の作業ディレクトリを <code>/app</code> に指定。</li>
+      <li><code>RUN pip install ...</code>: I2C通信に必要な <code>smbus2</code> をインストール。</li>
+      <li><code>COPY . /app</code>: ホスト側のファイルをコンテナ内に持ち込む。</li>
+      <li><code>CMD [...]</code>: コンテナが起動したときに自動実行するPythonスクリプトを指定。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>3. docker-compose.yml の書き方と詳細解説</h2>
+    <p>コンテナの起動オプションや、ハードウェア（I2C）の共有設定を行うファイル。</p>
+
+    <pre><code>version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: python_on_Docker
+    # 標準入出力（printなど）をリアルタイムでコンソールに出すため
+    stdin_open: true
+    tty: true
+    # ホスト側のI2Cハードウェア（例: /dev/i2c-1）をコンテナ内に共有する
+    devices:
+     - "/dev/i2c-1:/dev/i2c-1"</code></pre>
+
+    <h3>各行・各項目の詳しい説明</h3>
+    <ul>
+      <li>
+        <code>version: '3.8'</code><br>
+        Docker Composeファイルの書式バージョンを指定している。（※近年のDockerでは省略しても動作する）
+      </li>
+      <li>
+        <code>services:</code><br>
+        これから立ち上げるコンテナ（サービス）群を定義するブロックの始まり。
+      </li>
+      <li>
+        <code>app:</code><br>
+        定義するサービスの名前（任意の名前）。ここでは <code>app</code> という名前のサービスにしている。
+      </li>
+      <li>
+        <code>build: .</code><br>
+        同じフォルダ内（<code>.</code>）にある <code>Dockerfile</code> を読み込んで、自作のイメージをビルドするように指示する。
+      </li>
+      <li>
+        <code>container_name: python_on_Docker</code><br>
+        起動するコンテナに <code>python_on_Docker</code> という分かりやすい名前を固定でつける。
+      </li>
+      <li>
+        <code>stdin_open: true</code> と <code>tty: true</code><br>
+        プログラム内の <code>print</code> 出力をリアルタイムでコンソール画面に表示させたり、キーボード入力を受け付けたりできるようにするための擬似端末割り当て設定。
+      </li>
+      <li>
+        <code>devices:</code> と <code>- "/dev/i2c-1:/dev/i2c-1"</code><br>
+        Dockerコンテナは完全に独立した空間であるため、外にあるセンサーやI2Cデバイスを触るために、ホスト側にあるI2Cデバイス（<code>/dev/i2c-1</code>）をコンテナ内へ直接共有（マウント）する設定。
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>4. 実行コマンドと「--build」の注意点</h2>
+
+    <h3>初回・プログラム修正時のビルド＆起動</h3>
+    <pre><code>docker compose up --build</code></pre>
+
+    <h3>通常起動（2回目以降）</h3>
+    <pre><code>docker compose up</code></pre>
+
+    <div class="warning">
+      <strong>⚠️ 初回起動時に <code>--build</code> を付け忘れたらどうなるか？</strong><br>
+      もし初回に <code>docker compose up</code>（<code>--build</code> なし）を実行してしまうと、Dockerfileに記述した <code>pip install smbus2</code> や <code>COPY . /app</code>（ファイルの取り込み）が行われないまま、あるいは古いイメージが存在しない場合は <code>No such file or directory</code> などのエラーやファイル不足で起動に失敗します。<br>
+      <strong>対策：</strong> 初めて起動するとき、または <code>Dockerfile</code> や <code>tmpapp.py</code> などのファイルを書き換えたときは、必ず <code>docker compose up --build</code> を実行してイメージを作り直してください。
+    </div>
+
+    <h3>停止とコンテナの削除</h3>
+    <pre><code>docker compose down</code></pre>
+  </section>
+
+  <!-- 戻るボタンエリア -->
+  <div class="footer-nav">
+      <a href="bibouroku.html" class="back-button">
+          ← 備忘録セットに戻る
+      </a>
+  </div>
+
+  <footer>
+    Docker + Python (smbus2) 備忘録
+  </footer>
+
+</main>
+
+<!-- 自動でコピーボタンを埋め込むJavaScript -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const pres = document.querySelectorAll('pre');
+    
+    pres.forEach((pre) => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-wrapper';
+      pre.parentNode.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
+
+      const button = document.createElement('button');
+      button.className = 'copy-btn';
+      button.textContent = 'Copy';
+
+      button.addEventListener('click', () => {
+        const code = pre.querySelector('code') || pre;
+        const text = code.innerText;
+
+        navigator.clipboard.writeText(text).then(() => {
+          button.textContent = 'Copied!';
+          button.style.background = 'rgba(59, 130, 246, 0.3)';
+          button.style.borderColor = '#3b82f6';
+
+          setTimeout(() => {
+            button.textContent = 'Copy';
+            button.style.background = 'rgba(255, 255, 255, 0.08)';
+            button.style.borderColor = '#475569';
+          }, 2000);
+        }).catch(err => {
+          console.error('Failed to copy: ', err);
+          button.textContent = 'Error';
+        });
+      });
+
+      wrapper.appendChild(button);
+    });
+  });
+</script>
+
+</body>
+</html>
